@@ -66,7 +66,7 @@ request 1
     |   -> cache miss
     | <--- attach to request 1's Promise
     |
-    | request 2
+    | request 3
     |   -> cache miss
     | <--- attach to request 1's Promise
     |

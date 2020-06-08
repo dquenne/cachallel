@@ -1,6 +1,6 @@
 {
   "name": "cachallel",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "For making idempotent calls in parallel and caching their responses",
   "main": "dist/index.js",
   "author": "Dylan Quenneville <dquenne@gmail.com>",

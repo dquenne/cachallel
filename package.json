@@ -1,13 +1,14 @@
 {
   "name": "cachallel",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "For making idempotent calls in parallel and caching their responses",
   "main": "dist/index.js",
   "author": "Dylan Quenneville <dquenne@gmail.com>",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "yarn rollup -c"
+    "build": "yarn rollup -c",
+    "build-publish": "yarn build && yarn publish"
   },
   "module": "dist/index.es.js",
   "files": [

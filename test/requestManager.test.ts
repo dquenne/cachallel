@@ -85,5 +85,24 @@ describe("RequestManager", () => {
 
       expect(lastCacheResult).toEqual(8);
     });
+
+    it("if redis errors, fall back to making default call", async () => {
+      const mock = makeRequestMock(100);
+      const erroringCacheMgr = {
+        get: async () => {
+          throw "fake error";
+        },
+        set: async () => true,
+      };
+      const reqMgr = new RequestManager(mock, erroringCacheMgr);
+
+      await reqMgr.call(4);
+
+      sleep(500);
+
+      const res = await reqMgr.call(4);
+
+      expect(res).toEqual(8);
+    });
   });
 });

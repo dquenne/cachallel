@@ -45,8 +45,29 @@ describe("RequestManager - using Redis", () => {
 
     await reqMgr.call(4);
 
-    sleep(1000);
+    await sleep(1000);
 
     await reqMgr.call(4);
+
+    expect(mock.mock.calls.length).toEqual(1);
+  });
+
+  it("sets TTL, re-calls base function if cache expired", async () => {
+    const mock = makeRequestMock(100);
+    const cacheMgr = new RedisCacheManager(redisClient, { ttlSeconds: 1 });
+
+    const reqMgr = new RequestManager(mock, cacheMgr);
+
+    await reqMgr.call(40); // call mock
+
+    await sleep(400);
+
+    await reqMgr.call(40); // use cache
+
+    await sleep(1000); // long enough for cache to expire
+
+    await reqMgr.call(40); // cache expired, call mock
+
+    expect(mock.mock.calls.length).toEqual(2);
   });
 });

@@ -33,7 +33,9 @@ export default class RequestManager<ResponseType, ArgumentsType extends any[]> {
         }
         return cached;
       }
+    } catch {}
 
+    try {
       const liveRequest = this.getLiveRequest(requestId);
 
       if (liveRequest) {

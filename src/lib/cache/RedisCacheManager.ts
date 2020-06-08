@@ -5,7 +5,7 @@ export default class RedisCacheManager<T> implements CacheManager<T> {
   constructor(
     readonly redis: RedisClient,
     readonly serialize = (val: T) => JSON.stringify(val),
-    readonly deserialize = (serialized: string) => JSON.parse(serialized) as T
+    readonly deserialize = (serialized: string) => JSON.parse(serialized) as T,
   ) {}
 
   get(key: string) {
@@ -15,7 +15,7 @@ export default class RedisCacheManager<T> implements CacheManager<T> {
           reject(err);
         }
         resolve(val ? this.deserialize(val) : undefined);
-      })
+      }),
     );
   }
 
@@ -26,7 +26,7 @@ export default class RedisCacheManager<T> implements CacheManager<T> {
           reject(err);
         }
         resolve(true);
-      })
+      }),
     );
   }
 }

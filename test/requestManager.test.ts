@@ -14,7 +14,7 @@ describe("RequestManager", () => {
   it("returns the right values", async () => {
     const reqMgr = new RequestManager(
       makeRequestMock(100),
-      new SimpleCacheManager()
+      new SimpleCacheManager(),
     );
 
     const results = await Promise.all([

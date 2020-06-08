@@ -25,7 +25,7 @@ describe("RequestManager - using Redis", () => {
   it("smoke test", async () => {
     const reqMgr = new RequestManager(
       makeRequestMock(100),
-      new RedisCacheManager(redisClient)
+      new RedisCacheManager(redisClient),
     );
 
     const results = await Promise.all([

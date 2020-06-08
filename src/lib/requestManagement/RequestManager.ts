@@ -1,6 +1,14 @@
 import * as uuid from "uuid";
 import { CacheManager } from "../cache/CacheManager";
 
+type RequestCallback<T> = (data: { requestId: string; args: T }) => {};
+
+interface Options<ArgType> {
+  onCacheHit?: RequestCallback<ArgType>;
+  onLiveRequestHit?: RequestCallback<ArgType>;
+  onCacheAndLiveRequestMiss?: RequestCallback<ArgType>;
+}
+
 export default class RequestManager<ResponseType, ArgumentsType extends any[]> {
   readonly liveRequests: { [requestId: string]: Promise<ResponseType> };
   readonly requestName: string;
@@ -8,6 +16,7 @@ export default class RequestManager<ResponseType, ArgumentsType extends any[]> {
   constructor(
     readonly requestFunction: (...args: ArgumentsType) => Promise<ResponseType>,
     readonly cacheManager: CacheManager<ResponseType>,
+    readonly options: Options<ArgumentsType> = {},
   ) {
     this.liveRequests = {};
     this.requestName = uuid.v4();
@@ -19,15 +28,25 @@ export default class RequestManager<ResponseType, ArgumentsType extends any[]> {
     try {
       const cached = await this.cacheManager.get(requestId);
       if (cached) {
+        if (this.options.onCacheHit) {
+          this.options.onCacheHit({ requestId, args });
+        }
         return cached;
       }
 
       const liveRequest = this.getLiveRequest(requestId);
 
       if (liveRequest) {
+        if (this.options.onLiveRequestHit) {
+          this.options.onLiveRequestHit({ requestId, args });
+        }
         return await liveRequest;
       }
     } catch {}
+
+    if (this.options.onCacheAndLiveRequestMiss) {
+      this.options.onCacheAndLiveRequestMiss({ requestId, args });
+    }
 
     return await this.makeNewRequest(requestId, args);
   }

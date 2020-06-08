@@ -6,8 +6,8 @@ export default class RequestManager<ResponseType, ArgumentsType extends any[]> {
   readonly requestName: string;
 
   constructor(
-    readonly cacheManager: CacheManager<ResponseType>,
-    readonly requestFunction: (...args: ArgumentsType) => Promise<ResponseType>
+    readonly requestFunction: (...args: ArgumentsType) => Promise<ResponseType>,
+    readonly cacheManager: CacheManager<ResponseType>
   ) {
     this.liveRequests = {};
     this.requestName = uuid.v4();

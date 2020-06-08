@@ -13,8 +13,8 @@ describe("RequestManager", () => {
 
   it("returns the right values", async () => {
     const reqMgr = new RequestManager(
-      new SimpleCacheManager<number>(),
-      makeRequestMock(100)
+      makeRequestMock(100),
+      new SimpleCacheManager()
     );
 
     const results = await Promise.all([
@@ -29,7 +29,7 @@ describe("RequestManager", () => {
   describe("using multiple references to one promise", () => {
     it("only makes 1 external call for multiple parallel requests", async () => {
       const mock = makeRequestMock(100);
-      const reqMgr = new RequestManager(new SimpleCacheManager<number>(), mock);
+      const reqMgr = new RequestManager(mock, new SimpleCacheManager());
 
       await Promise.all([
         reqMgr.call(3),
@@ -42,7 +42,7 @@ describe("RequestManager", () => {
 
     it("clears liveRequests after cached", async () => {
       const mock = makeRequestMock(100);
-      const reqMgr = new RequestManager(new SimpleCacheManager<number>(), mock);
+      const reqMgr = new RequestManager(mock, new SimpleCacheManager());
 
       await Promise.all([
         reqMgr.call(3),
@@ -57,7 +57,7 @@ describe("RequestManager", () => {
   describe("using cache", () => {
     it("only makes 1 external call for multiple non-overlapping requests", async () => {
       const mock = makeRequestMock(100);
-      const reqMgr = new RequestManager(new SimpleCacheManager<number>(), mock);
+      const reqMgr = new RequestManager(mock, new SimpleCacheManager());
 
       await reqMgr.call(10);
 
@@ -71,7 +71,7 @@ describe("RequestManager", () => {
     it("uses cache for non-parallel calls", async () => {
       const mock = makeRequestMock(100);
       const cacheMgr = new MockCacheManager<number>();
-      const reqMgr = new RequestManager(cacheMgr, mock);
+      const reqMgr = new RequestManager(mock, cacheMgr);
 
       await reqMgr.call(4);
 

@@ -84,19 +84,21 @@ request 4
 ## Example usage
 
 ```ts
-import * as axios from "axios";
+import axios from "axios";
 import { RedisClient } from "redis";
 import { RequestManager, RedisCacheManager } from "cachallel";
 
-async function getResourceFromSlowApi(id: number) {
+async function getResourceFromSlowApi(
+  id: number,
+): Promise<{ id: number; name: string }> {
   return await axios.get(`external.service/resource/${id}`);
 }
 
 const redisClient = new RedisClient({ host: "127.0.0.1" });
 
-slowApiManager = new RequestManager(
+const slowApiManager = new RequestManager(
+  getResourceFromSlowApi,
   new RedisCacheManager(redisClient),
-  getResourceFromSlowApi
 );
 
 export default async function call(id: number) {

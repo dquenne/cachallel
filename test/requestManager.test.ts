@@ -42,15 +42,20 @@ describe("RequestManager", () => {
 
     it("clears liveRequests after cached", async () => {
       const mock = makeRequestMock(100);
-      const reqMgr = new RequestManager(mock, new SimpleCacheManager());
+
+      const liveReqHitMock = jest.fn();
+      const reqMgr = new RequestManager(mock, new SimpleCacheManager(), {
+        onLiveRequestHit: liveReqHitMock,
+      });
 
       await Promise.all([
         reqMgr.call(3),
         sleep(50).then(() => reqMgr.call(3)),
-        sleep(80).then(() => reqMgr.call(3)),
+        sleep(200).then(() => reqMgr.call(3)),
       ]);
 
       expect(Object.values(reqMgr.liveRequests)).toHaveLength(0);
+      expect(liveReqHitMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -71,7 +76,10 @@ describe("RequestManager", () => {
     it("uses cache for non-parallel calls", async () => {
       const mock = makeRequestMock(100);
       const cacheMgr = new MockCacheManager<number>();
-      const reqMgr = new RequestManager(mock, cacheMgr);
+      const cacheHitMock = jest.fn();
+      const reqMgr = new RequestManager(mock, cacheMgr, {
+        onCacheHit: () => cacheHitMock(),
+      });
 
       await reqMgr.call(4);
 
@@ -84,6 +92,7 @@ describe("RequestManager", () => {
       ].value;
 
       expect(lastCacheResult).toEqual(8);
+      expect(cacheHitMock).toHaveBeenCalled();
     });
 
     it("if redis errors, fall back to making default call", async () => {

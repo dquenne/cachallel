@@ -1,12 +1,13 @@
 import * as uuid from "uuid";
 import { CacheManager } from "../cache/CacheManager";
 
-type RequestCallback<T> = (data: { requestId: string; args: T }) => {};
-
 interface Options<ArgType> {
-  onCacheHit?: RequestCallback<ArgType>;
-  onLiveRequestHit?: RequestCallback<ArgType>;
-  onCacheAndLiveRequestMiss?: RequestCallback<ArgType>;
+  onCacheHit?: (data: { requestId: string; args: ArgType }) => {};
+  onLiveRequestHit?: (data: { requestId: string; args: ArgType }) => {};
+  onCacheAndLiveRequestMiss?: (data: {
+    requestId: string;
+    args: ArgType;
+  }) => {};
 }
 
 export default class RequestManager<ResponseType, ArgumentsType extends any[]> {
